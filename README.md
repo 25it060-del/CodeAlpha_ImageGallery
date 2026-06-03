@@ -25,7 +25,7 @@ This project was completed as part of the **CodeAlpha Frontend Development Inter
 
 ### Connect with Me
 - LinkedIn: www.linkedin.com/in/MohamedMydeenD
-- GitHub: https://github.com/25it060
+- GitHub: https://github.com/25it060-del
 
 ---
 ⭐ If you found this project useful, feel free to give it a star!
