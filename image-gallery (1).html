@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2d3436;
+            --accent: #ff6b6b;
+            --accent-alt: #4ecdc4;
+            --light: #f8f9fa;
+            --border: #e9ecef;
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--primary);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            color: #636e72;
+            font-weight: 300;
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .filter-btn {
+            padding: 12px 28px;
+            border: 2px solid var(--border);
+            background: white;
+            color: var(--primary);
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: white;
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.2);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            animation: fadeIn 0.6s ease-out 0.2s backwards;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            group: "gallery";
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .gallery-item.hidden {
+            display: none;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(45, 52, 54, 0.4);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(45, 52, 54, 0.9), transparent);
+            color: white;
+            padding: 20px;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-label {
+            transform: translateY(0);
+        }
+
+        .gallery-label h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .gallery-label p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #636e72;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .filter-container {
+                gap: 10px;
+            }
+
+            .filter-btn {
+                padding: 10px 20px;
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gallery</h1>
+            <p class="subtitle">Explore our curated image collection</p>
+        </header>
+
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="nature">Nature</button>
+            <button class="filter-btn" data-filter="mountain">Mountain</button>
+            <button class="filter-btn" data-filter="animals">Animals</button>
+        </div>
+
+        <div class="gallery" id="gallery">
+            <!-- Gallery items will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample gallery data - Replace with your own images
+        const galleryData = [
+            {
+                id: 1,
+                title: "Forest Path",
+                category: "nature",
+                image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop",
+                description: "Serene forest walkway"
+            },
+            {
+                id: 2,
+                title: "Mountain Peak",
+                category: "mountain",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+                description: "Majestic mountain view"
+            },
+            {
+                id: 3,
+                title: "Wild Lion",
+                category: "animals",
+                image: "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?w=400&h=400&fit=crop",
+                description: "King of the savanna"
+            },
+            {
+                id: 4,
+                title: "Ocean Waves",
+                category: "nature",
+                image: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400&h=400&fit=crop",
+                description: "Powerful ocean waves"
+            },
+            {
+                id: 5,
+                title: "Alpine Ridge",
+                category: "mountain",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+                description: "High altitude adventure"
+            },
+            {
+                id: 6,
+                title: "Elephant Grace",
+                category: "animals",
+                image: "https://images.unsplash.com/photo-1564349776924-ab4faa45d4ec?w=400&h=400&fit=crop",
+                description: "Gentle giant"
+            },
+            {
+                id: 7,
+                title: "Desert Bloom",
+                category: "nature",
+                image: "https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=400&h=400&fit=crop",
+                description: "Life in arid lands"
+            },
+            {
+                id: 8,
+                title: "Snowy Summit",
+                category: "mountain",
+                image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop",
+                description: "Winter wonderland"
+            },
+            {
+                id: 9,
+                title: "Eagle Flight",
+                category: "animals",
+                image: "https://images.unsplash.com/photo-1552985682-cd2b5e145d88?w=400&h=400&fit=crop",
+                description: "Soaring through skies"
+            }
+        ];
+
+        const gallery = document.getElementById('gallery');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        let currentFilter = 'all';
+
+        function renderGallery(filter = 'all') {
+            gallery.innerHTML = '';
+            let itemCount = 0;
+
+            galleryData.forEach((item, index) => {
+                if (filter === 'all' || item.category === filter) {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'gallery-item';
+                    galleryItem.style.animationDelay = `${index * 0.05}s`;
+                    
+                    galleryItem.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}" loading="lazy">
+                        <div class="gallery-label">
+                            <h3>${item.title}</h3>
+                            <p>${item.description}</p>
+                        </div>
+                    `;
+                    
+                    gallery.appendChild(galleryItem);
+                    itemCount++;
+                }
+            });
+
+            if (itemCount === 0) {
+                gallery.innerHTML = '<div class="no-results" style="grid-column: 1/-1;">No images found in this category.</div>';
+            }
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                renderGallery(currentFilter);
+            });
+        });
+
+        // Initial render
+        renderGallery();
+    </script>
+</body>
+</html>
