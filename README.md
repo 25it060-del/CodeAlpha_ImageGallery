@@ -24,7 +24,7 @@ This project was completed as part of the **CodeAlpha Frontend Development Inter
 **Mohamed Mydeen**
 
 ### Connect with Me
-- LinkedIn: www.linkedin.com/in/Mohamed Mydeen D
+- LinkedIn: www.linkedin.com/in/MohamedMydeenD
 - GitHub: https://github.com/25it060
 
 ---
